@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        h1{
+            text-align: center;
+        }
+
+        #main{
+            width: 80%;
+            height: 600px;
+            margin: auto;
+            /* border:  1px solid red; */
+            display: flex;
+            justify-content: space-evenly;
+            background-color: teal;
+        }
+        #moive_list{
+           
+            /* width: 300px;
+            height: 300px;
+            border: 1px solid black;
+            border-top: none; */
+            overflow: scroll;
+            
+
+        }
+        #moive_name{
+           width: 45%;
+           height: 600px;
+           /* border: 1px solid red; */
+           
+        }
+
+        #inputBox{
+            width: 40%;
+            height: 100%;
+            /* border: 1px solid black; */
+        }
+         
+        #moiveDiv{
+            text-align: center;
+           /* border: 0.5px solid red; */
+        }
+       img{
+           height: 500px;
+           width: 90%;
+          
+       }
+
+        #query{
+            width: 300px;
+            height: 20px;
+        }
+        #image{
+            height: 250px;
+            width: 200px;
+        }
+
+        #trending{
+            width: 95%;
+            height: 400px;
+            border: 1px solid black;
+            display: flex;
+            overflow: scroll;
+            overflow-y: hidden;
+            margin: auto;
+            background-color: rgb(194, 228, 228);
+        }
+        #trendbox{
+            
+          margin: 2%;
+          /* border: 1px solid red; */
+          height: 300px;
+
+        }
+
+        #date{
+         margin-top: -25px;
+        }
+
+    </style>
+</head>
+<body>
+      <h1>Hotstar</h1>
+      
+      <div id="main"> 
+        <div id="inputBox"><input oninput="debounce(main,1000)" type="text" id="query" placeholder="Search Here"/>
+            <div id="moive_list"></div>
+        
+        </div>
+
+
+      
+       
+        <div id="moive_name"></div>
+      </div>
+
+      <h1>TRENDING MOVIE</h1>
+      <div id="trending"> </div>
+     
+      
+</body>
+</html>
+<!-- let url ="http://www.omdbapi.com/?apikey="+apikey;
+    url=url+"&t="+movieName; -->
+<script>
+         let id;
+         let container=document.getElementById("moive_name")
+        let box=document.getElementById("moive_list")
+      async function myFun(){
+        // http://www.omdbapi.com/?apikey=999b0b95&s=${query}
+       try{
+          
+        const query=document.getElementById("query").value;
+
+         let res= await fetch(`http://www.omdbapi.com/?apikey=999b0b95&s=${query}`);
+
+        let data= await res.json()
+        console.log("data",data)
+        const moive=data.Search
+        // appendMoives(moive)
+        return moive
+       
+       }
+       catch(err)
+       {
+           console.log(err)
+       }
+
+      }
+
+      function appendMoives(data){
+        box.innerText=null
+          data.forEach(function(el,index){
+           
+           
+               let p=document.createElement("h5");
+
+               p.addEventListener("click",function(){
+                  
+                    showMoive(el,index)
+
+               })
+
+
+               p.innerText= el.Title
+
+               box.append(p)
+
+
+          })
+      }
+    
+      async function main(){
+          let data=await myFun()
+        if(data==undefined)
+        {
+            return false
+        }
+          appendMoives(data)
+      }
+
+      function debounce(func,delay){
+          if(id){
+              clearTimeout(id)
+          }
+         id= setTimeout(function(){
+            
+            func()
+
+          },delay)
+      }
+        // let arr=JSON.parse(localStorage.getItem("moivedata"))||[]
+
+        let arr=[]
+
+      function showMoive(el,index){
+        
+         arr.push(el)
+         console.log(arr)
+        
+        // localStorage.setItem("moivedata",JSON.stringify(arr))
+          arr.map(function(el,index){
+           
+            container.innerText=null
+              let div=document.createElement("div")
+              div.setAttribute("id","moiveDiv")
+            let image=document.createElement("img")
+
+              image.src=el.Poster
+              let title=document.createElement("h4")
+
+              title.innerText=`Title: ${el.Title}`
+
+              let date= document.createElement("p")
+
+              date.innerText=`Year: ${el.Year}`
+              date.setAttribute("id","date")
+
+              div.append(image,title,date)
+              container.append(div)
+          
+            //   arr.splice(index,1)
+            
+              
+              
+          })
+         
+      }
+
+       let u="https://api.themoviedb.org/3/trending/all/day?api_key=e430449083c12a0af8bd6f9e85da0fda" 
+
+    //  
+      
+
+      let url=" https://api.themoviedb.org/3/movie/popular?api_key=e430449083c12a0af8bd6f9e85da0fda&language=en-US&page=1"
+
+      fetch(u)
+      .then(function(res){
+          return res.json()
+      })
+      .then(function(res){
+
+        let data= res.results
+          console.log(data)
+          appendData(data)
+      })
+      .catch(function(err){
+          console.log(err)
+      })
+      let trending= document.getElementById("trending")
+      function appendData(data){
+
+       
+
+        data.map(function(el,index){
+
+            let div=document.createElement("div")
+
+            div.setAttribute("id","trendbox")
+            
+            let image=document.createElement("img")
+            image.src="https://tse4.mm.bing.net/th?id=OIP.nfEMVTdKvwQUi1EXVXi3pAHaK-&pid=Api&P=0&w=108&h=161"
+            image.setAttribute("id","image")
+
+        let name= document.createElement("h4")
+        
+        name.innerText=`Title: ${el.title || el.name}`
+
+        let date=document.createElement("p")
+        date.innerText=`Releasing On: ${el.release_date || el.first_air_date}`
+
+        div.append(image,name,date)
+
+        trending.append(div)
+
+        })
+        
+
+      }
+
+    
+
+      
+</script>
